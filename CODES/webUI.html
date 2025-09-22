@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Sensor Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #212529;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .dark-mode {
+            background-color: #212529;
+            color: #f8f9fa;
+        }
+
+        .header, .footer {
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            padding: 15px 0;
+        }
+        .dark-mode .header, .dark-mode .footer {
+            background-color: #0dcaf0;
+            color: #212529;
+        }
+
+        .card {
+            margin: 20px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        }
+        .card-title i {
+            margin-right: 10px;
+            
+        }
+
+        .loading {
+            animation: blink 1.5s infinite;
+        }
+        @keyframes blink {
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .btn-toggle-mode {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+        }
+        .dark-mode .btn-toggle-mode {
+            background-color: #0dcaf0;
+            color: #212529;
+        }
+
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .dark-mode .footer a {
+            color: #212529;
+        }
+
+        .card-text {
+            color: #212529;
+        }
+        h5 {
+            color: #212529;
+            }
+    </style>
+</head>
+<body>
+    <button class="btn btn-toggle-mode">Toggle Dark Mode</button>
+
+    <!-- header -->
+    <div class="header">
+        <h1>Enhanced Sensor Dashboard</h1>
+        <p>Real-time Monitoring of Sensor Data</p>
+    </div>
+
+    <!-- main content  -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-wind"></i>Wind Direction</h5>
+                        <p class="card-text" id="wind-direction" class="loading">Loading...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-water"></i>Water Level</h5>
+                        <p class="card-text" id="water-level" class="loading">Loading...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-thermometer-half"></i>Temperature</h5>
+                        <p class="card-text" id="temperature" class="loading">Loading...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4"><div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-tint"></i>Humidity</h5>
+                        <p class="card-text" id="humidity" class="loading">Loading...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-lightbulb"></i>LDR</h5>
+                        <p class="card-text" id="ldr" class="loading">Loading...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-gas-pump"></i>MQ135</h5>
+                        <p class="card-text" id="mq135" class="loading">Loading...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-fire"></i>Flame</h5>
+                        <p class="card-text" id="flame" class="loading">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- footer -->
+    <div class="footer">
+        <p>Designed with <i class="fas fa-heart"></i> by Kosar Alijanlou & Masoumeh Khaki shaneh saz </p>
+    </div>
+
+    <script>
+        // receiving data
+        function fetchData() {
+            fetch('/live-data')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('wind-direction').textContent = data.wind_direction || "N/A";
+                    document.getElementById('water-level').textContent = data.water_level !== undefined ? data.water_level.toFixed(2) + " cm" : "N/A";
+                    document.getElementById('temperature').textContent = data.temperature !== undefined ? data.temperature + " °C" : "N/A";
+                    document.getElementById('humidity').textContent = data.humidity !== undefined ? data.humidity + " %" : "N/A";
+                    document.getElementById('ldr').textContent = data.ldr || "N/A";
+                    document.getElementById('mq135').textContent = data.mq135 || "N/A";
+                    document.getElementById('flame').textContent = data.flame !== undefined ? (data.flame ? "Detected" : "Not Detected") : "N/A";
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        }
+
+        setInterval(fetchData, 2000);
+
+        // dark/light mode switch
+        document.querySelector('.btn-toggle-mode').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+    </script>
+</body>
+</html>
